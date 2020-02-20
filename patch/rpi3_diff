@@ -1,0 +1,60 @@
+
+project frameworks/base/
+diff --git a/services/core/java/com/android/server/wm/DisplayContent.java b/services/core/java/com/android/server/wm/DisplayContent.java
+index 22ac65df433..77ddaff4226 100644
+--- a/services/core/java/com/android/server/wm/DisplayContent.java
++++ b/services/core/java/com/android/server/wm/DisplayContent.java
+@@ -773,6 +773,7 @@ class DisplayContent extends WindowContainer<DisplayContent.DisplayChildWindowCo
+         // layers the ability to match their parent sizes and be able to skip
+         // such arbitrary size settings.
+         mSurfaceSize = Math.max(mBaseDisplayHeight, mBaseDisplayWidth) * 2;
++        if (mSurfaceSize > 2048) mSurfaceSize = 2048;
+
+         final SurfaceControl.Builder b = mService.makeSurfaceBuilder(mSession)
+                 .setSize(mSurfaceSize, mSurfaceSize)
+
+project hardware/interfaces/
+diff --git a/graphics/allocator/2.0/utils/hal/include/allocator-hal/2.0/Allocator.h b/graphics/allocator/2.0/utils/hal/include/allocator-hal/2.0/Allocator.h
+index 8ca820026..0a979362f 100644
+--- a/graphics/allocator/2.0/utils/hal/include/allocator-hal/2.0/Allocator.h
++++ b/graphics/allocator/2.0/utils/hal/include/allocator-hal/2.0/Allocator.h
+@@ -66,6 +66,7 @@ class AllocatorImpl : public Interface {
+
+         hidl_vec<hidl_handle> hidlBuffers(buffers.cbegin(), buffers.cend());
+         hidl_cb(Error::NONE, stride, hidlBuffers);
++        usleep(1000);
+
+         // free the local handles
+         mHal->freeBuffers(buffers);
+
+project packages/apps/TvSettings/
+diff --git a/Settings/res/layout/setup_password_item.xml b/Settings/res/layout/setup_password_item.xml
+index 64951483..57665743 100644
+--- a/Settings/res/layout/setup_password_item.xml
++++ b/Settings/res/layout/setup_password_item.xml
+@@ -32,7 +32,7 @@
+         android:paddingEnd="@dimen/setup_list_item_padding"
+         android:paddingStart="@dimen/setup_list_item_padding">
+
+-        <EditText
++        <android.support.v17.leanback.widget.GuidedActionEditText
+             android:id="@+id/guidedactions_item_title"
+             style="@style/Setup.Action.TextInput"
+             android:layout_width="match_parent"
+@@ -40,8 +40,7 @@
+             android:focusable="true"
+             android:gravity="center_vertical"
+             android:imeOptions="actionNext|flagNoExtractUi"
+-            android:inputType="text">
+-        </EditText>
++            android:inputType="text" />
+     </FrameLayout>
+
+     <CheckBox
+@@ -53,4 +52,4 @@
+         android:buttonTint="@color/setup_list_item_background_focused"
+         android:buttonTintMode="src_in"
+         android:text="@string/text_obfuscation_toggle_caption" />
+-</LinearLayout>
+\ No newline at end of file
++</LinearLayout>
